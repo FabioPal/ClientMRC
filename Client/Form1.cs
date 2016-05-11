@@ -18,7 +18,7 @@ namespace Client
         {
             InitializeComponent();
         }
-
+        int fabio;
         private void button1_Click(object senderObj, EventArgs e)
         {
             // Data buffer for incoming data.
