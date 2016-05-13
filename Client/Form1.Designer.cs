@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.ipBox = new System.Windows.Forms.TextBox();
             this.portBox = new System.Windows.Forms.TextBox();
             this.connectionBtn = new System.Windows.Forms.Button();
@@ -41,6 +42,7 @@
             this.idBox = new System.Windows.Forms.TextBox();
             this.humBox = new System.Windows.Forms.TextBox();
             this.presBox = new System.Windows.Forms.TextBox();
+            this.ipTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // ipBox
@@ -49,6 +51,7 @@
             this.ipBox.Name = "ipBox";
             this.ipBox.Size = new System.Drawing.Size(100, 20);
             this.ipBox.TabIndex = 0;
+            this.ipBox.MouseHover += new System.EventHandler(this.ipBox_MouseHover);
             // 
             // portBox
             // 
@@ -189,6 +192,8 @@
         private System.Windows.Forms.TextBox idBox;
         private System.Windows.Forms.TextBox humBox;
         private System.Windows.Forms.TextBox presBox;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ToolTip ipTip;
     }
 }
 

@@ -100,5 +100,11 @@ namespace Client
                 Console.WriteLine(e.ToString());
             }
         }
+
+        //Mostra una tooltip quando il mouse rimane fermo sulla textBox in cui inserire l'IP
+        private void ipBox_MouseHover(object sender, EventArgs e)
+        {
+            ipTip.Show("Indirizzo IP del server a cui connettersi", ipBox, 2000);
+        }
     }
 }
