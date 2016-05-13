@@ -18,13 +18,11 @@ namespace Client
         {
             InitializeComponent();
         }
-        int fabio;
         private void button1_Click(object senderObj, EventArgs e)
         {
-            // Data buffer for incoming data.
+            // Buffer per i dati in uscita
             byte[] bytes = new byte[1024];
 
-            // Connect to a remote device.
             try
             {
                 IPAddress ipAddress;
@@ -35,14 +33,14 @@ namespace Client
                 }
                 else
                 {
-                    // Establish the remote endpoint for the socket.
+                    // Crea l'endpoint remoto della socket
                     UInt16 portNum = UInt16.Parse(portBox.Text);
                     IPEndPoint remoteEP = new IPEndPoint(ipAddress, portNum);
-                    // Create a TCP/IP  socket.
+                    //  Crea una socket TCP/IP
                     Socket sender = new Socket(AddressFamily.InterNetwork,
                         SocketType.Stream, ProtocolType.Tcp);
 
-                    // Connect the socket to the remote endpoint. Catch any errors.
+                    //Connettiti alla socket
                     try
                     {
                         sender.Connect(remoteEP);
@@ -50,17 +48,21 @@ namespace Client
                         Console.WriteLine("Socket connected to {0}",
                             sender.RemoteEndPoint.ToString());
 
-                        // Encode the data string into a byte array.
-                        byte[] msg = Encoding.ASCII.GetBytes(msgBox.Text + "<EOF>");
+                        // Converte il messaggio da inviare, secondo il protocollo adottato, in un array di byte
+                        //concluso da un carattere terminatore (EOF)
+                        //IL MESSAGGIO INVIATO HA LA SEGUENTE STRUTTURA:
+                        // idSensore#temperatura#umidità#pressione<EOF>
+                        byte[] msg = Encoding.ASCII.GetBytes(idBox.Text + "#" + tempBox.Text + "#" + humBox.Text + "#"+ presBox.Text + "<EOF>");
 
-                        // Send the data through the socket.
+                        // Invia i dati tramite la socket
                         int bytesSent = sender.Send(msg);
 
-                        // Release the socket.
+                        // Rilascia la socket
                         sender.Shutdown(SocketShutdown.Both);
                         sender.Close();
                     }
 
+                    //Gestione delle eccezioni
                     catch (ArgumentNullException ane)
                     {
                         MessageBox.Show("Errore nell'invio del messaggio", "Errore");
@@ -68,8 +70,12 @@ namespace Client
                     }
                     catch (SocketException se)
                     {
-                        MessageBox.Show("Errore nella socket", "Errore");
+                        MessageBox.Show("Errore nella socket: \n" + se.Message.ToString(), "Errore");
                         Console.WriteLine("SocketException : {0}", se.ToString());
+                    }
+                    catch (FormatException ex)
+                    {
+                        MessageBox.Show("I campi del messaggio non possono essere vuoti", "Errore");
                     }
                     catch (Exception exce)
                     {
@@ -79,15 +85,14 @@ namespace Client
                 }
 
             }
+            catch (FormatException ex)
+            {
+                MessageBox.Show("Il campo numero di porta non può essere vuoto", "Errore");
+            }
             catch (Exception exce)
             {
                 Console.WriteLine(e.ToString());
             }
-        }
-
-        private void msgBox_TextChanged(object sender, EventArgs e)
-        {
-            Console.WriteLine("Testo cambiato");
         }
     }
 }
