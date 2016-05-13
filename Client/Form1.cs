@@ -26,40 +26,47 @@ namespace Client
             try
             {
                 IPAddress ipAddress;
-                //Controlla se l'indirizzo IP è in formato valido
+                //Controlla se l'indirizzo IP è presente ed è in formato valido
                 if (!IPAddress.TryParse((ipBox.Text), out ipAddress))
                 {
                     MessageBox.Show("Inserisci un indirizzo IP valido", "Errore");
                 }
                 else
                 {
-                    // Crea l'endpoint remoto della socket
-                    UInt16 portNum = UInt16.Parse(portBox.Text);
-                    IPEndPoint remoteEP = new IPEndPoint(ipAddress, portNum);
-                    //  Crea una socket TCP/IP
-                    Socket sender = new Socket(AddressFamily.InterNetwork,
-                        SocketType.Stream, ProtocolType.Tcp);
-
-                    //Connettiti alla socket
                     try
                     {
-                        sender.Connect(remoteEP);
 
-                        Console.WriteLine("Socket connected to {0}",
-                            sender.RemoteEndPoint.ToString());
+                        //Controlla se tutti i campi del messaggio da inviare sono stati inseriti
+                        if  (String.IsNullOrEmpty(idBox.Text) || String.IsNullOrEmpty(tempBox.Text) || String.IsNullOrEmpty(humBox.Text) || String.IsNullOrEmpty(presBox.Text))
+                            MessageBox.Show("I campi del messaggio non possono essere vuoti", "Errore");
+                        else
+                        {
 
-                        // Converte il messaggio da inviare, secondo il protocollo adottato, in un array di byte
-                        //concluso da un carattere terminatore (EOF)
-                        //IL MESSAGGIO INVIATO HA LA SEGUENTE STRUTTURA:
-                        // idSensore#temperatura#umidità#pressione<EOF>
-                        byte[] msg = Encoding.ASCII.GetBytes(idBox.Text + "#" + tempBox.Text + "#" + humBox.Text + "#"+ presBox.Text + "<EOF>");
+                            // Crea l'endpoint remoto della socket
+                            UInt16 portNum = UInt16.Parse(portBox.Text);
+                            IPEndPoint remoteEP = new IPEndPoint(ipAddress, portNum);
+                           
+                            //  Crea una socket TCP/IP
+                            Socket sender = new Socket(AddressFamily.InterNetwork,
+                                SocketType.Stream, ProtocolType.Tcp);
+                            
+                            //Connettiti alla socket
+                            sender.Connect(remoteEP);
+                            Console.WriteLine("Socket connected to {0}",
+                                sender.RemoteEndPoint.ToString());
+                            
+                            // Converte il messaggio da inviare, secondo il protocollo adottato, in un array di byte
+                            //concluso da un carattere terminatore (EOF)
+                            //IL MESSAGGIO INVIATO HA LA SEGUENTE STRUTTURA:
+                            // idSensore#temperatura#umidità#pressione<EOF>
+                            byte[] msg = Encoding.ASCII.GetBytes(idBox.Text + "#" + tempBox.Text + "#" + humBox.Text + "#" + presBox.Text + "<EOF>");
+                            // Invia i dati tramite la socket
+                            int bytesSent = sender.Send(msg);
 
-                        // Invia i dati tramite la socket
-                        int bytesSent = sender.Send(msg);
-
-                        // Rilascia la socket
-                        sender.Shutdown(SocketShutdown.Both);
-                        sender.Close();
+                            // Rilascia la socket
+                            sender.Shutdown(SocketShutdown.Both);
+                            sender.Close();
+                        }
                     }
 
                     //Gestione delle eccezioni
@@ -75,7 +82,6 @@ namespace Client
                     }
                     catch (FormatException ex)
                     {
-                        MessageBox.Show("I campi del messaggio non possono essere vuoti", "Errore");
                     }
                     catch (Exception exce)
                     {
