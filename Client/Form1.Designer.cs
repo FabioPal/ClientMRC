@@ -87,6 +87,7 @@
             this.msgBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.msgBox.Size = new System.Drawing.Size(237, 115);
             this.msgBox.TabIndex = 5;
+            this.msgBox.TextChanged += new System.EventHandler(this.msgBox_TextChanged);
             // 
             // msgLabel
             // 

@@ -84,5 +84,10 @@ namespace Client
                 Console.WriteLine(e.ToString());
             }
         }
+
+        private void msgBox_TextChanged(object sender, EventArgs e)
+        {
+            Console.WriteLine("Testo cambiato");
+        }
     }
 }
