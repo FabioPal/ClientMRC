@@ -12,13 +12,14 @@ using System.Windows.Forms;
 
 namespace Client
 {
-    public partial class Form1 : Form
+    public partial class ClientDatiActigrafo : Form
     {
-        public Form1()
+        public ClientDatiActigrafo()
         {
             InitializeComponent();
         }
-        private void button1_Click(object senderObj, EventArgs e)
+
+        private void sendBtn_Click(object sender, EventArgs e)
         {
             // Buffer per i dati in uscita
             byte[] bytes = new byte[1024];
@@ -37,7 +38,7 @@ namespace Client
                     {
 
                         //Controlla se tutti i campi del messaggio da inviare sono stati inseriti
-                        if  (String.IsNullOrEmpty(idBox.Text) || String.IsNullOrEmpty(tempBox.Text) || String.IsNullOrEmpty(humBox.Text) || String.IsNullOrEmpty(presBox.Text))
+                        if (String.IsNullOrEmpty(idBox.Text) || String.IsNullOrEmpty(activityBox.Text))
                             MessageBox.Show("I campi del messaggio non possono essere vuoti", "Errore");
                         else
                         {
@@ -45,27 +46,27 @@ namespace Client
                             // Crea l'endpoint remoto della socket
                             UInt16 portNum = UInt16.Parse(portBox.Text);
                             IPEndPoint remoteEP = new IPEndPoint(ipAddress, portNum);
-                           
+
                             //  Crea una socket TCP/IP
-                            Socket sender = new Socket(AddressFamily.InterNetwork,
+                            Socket senderAct = new Socket(AddressFamily.InterNetwork,
                                 SocketType.Stream, ProtocolType.Tcp);
-                            
+
                             //Connettiti alla socket
-                            sender.Connect(remoteEP);
+                            senderAct.Connect(remoteEP);
                             Console.WriteLine("Socket connected to {0}",
-                                sender.RemoteEndPoint.ToString());
-                            
+                                senderAct.RemoteEndPoint.ToString());
+
                             // Converte il messaggio da inviare, secondo il protocollo adottato, in un array di byte
                             //concluso da un carattere terminatore (EOF)
                             //IL MESSAGGIO INVIATO HA LA SEGUENTE STRUTTURA:
-                            // idSensore#temperatura#umidità#pressione<EOF>
-                            byte[] msg = Encoding.ASCII.GetBytes(idBox.Text + "#" + tempBox.Text + "#" + humBox.Text + "#" + presBox.Text + "<EOF>");
+                            // tipoPacchetto(=1)#idActigrafo#indiceAttivitàFisica<EOF>
+                            byte[] msg = Encoding.ASCII.GetBytes("1" + "#" + idBox.Text + "#" + activityBox.Text + "<EOF>");
                             // Invia i dati tramite la socket
-                            int bytesSent = sender.Send(msg);
+                            int bytesSent = senderAct.Send(msg);
 
                             // Rilascia la socket
-                            sender.Shutdown(SocketShutdown.Both);
-                            sender.Close();
+                            senderAct.Shutdown(SocketShutdown.Both);
+                            senderAct.Close();
                         }
                     }
 
@@ -99,12 +100,6 @@ namespace Client
             {
                 Console.WriteLine(e.ToString());
             }
-        }
-
-        //Mostra una tooltip quando il mouse rimane fermo sulla textBox in cui inserire l'IP
-        private void ipBox_MouseHover(object sender, EventArgs e)
-        {
-            ipTip.Show("Indirizzo IP del server a cui connettersi", ipBox, 2000);
         }
     }
 }

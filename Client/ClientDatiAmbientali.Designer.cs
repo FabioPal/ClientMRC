@@ -1,6 +1,6 @@
 ﻿namespace Client
 {
-    partial class Form1
+    partial class ClientDatiAmbientali
     {
         /// <summary>
         /// Variabile di progettazione necessaria.
@@ -171,7 +171,7 @@
             this.Controls.Add(this.portBox);
             this.Controls.Add(this.ipBox);
             this.Name = "Form1";
-            this.Text = "Sensor - Client";
+            this.Text = "Sensor - Client dati ambientali";
             this.ResumeLayout(false);
             this.PerformLayout();
 
